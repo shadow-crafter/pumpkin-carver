@@ -10,7 +10,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.z = 5;
+camera.position.z = 25;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -18,10 +18,15 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.SphereGeometry(2, 16, 12);
-const material = new THREE.MeshStandardMaterial({ color: 0xff7518 });
-const sphere = new THREE.Mesh(geometry, material);
-scene.add(sphere);
+const pumpkinGeometry = new THREE.SphereGeometry(10, 16, 12);
+const pumpkinMaterial = new THREE.MeshStandardMaterial({ color: 0xff7518 });
+const pumpkinSphere = new THREE.Mesh(pumpkinGeometry, pumpkinMaterial);
+
+const stemGeometry = new THREE.CylinderGeometry(1.5, 3, 9, 12);
+const stemMaterial = new THREE.MeshStandardMaterial({ color: 0x964b00 });
+const stemCylinder = new THREE.Mesh(stemGeometry, stemMaterial);
+stemCylinder.position.y = 10;
+scene.add(pumpkinSphere, stemCylinder);
 
 const pointLight = new THREE.PointLight(0xffffff);
 pointLight.position.set(2.5, 2.5, 0);
@@ -39,7 +44,7 @@ scene.add(ambientLight);
 const controls = new OrbitControls(camera, renderer.domElement);
 
 function animate() {
-  sphere.rotation.y += 0.01;
+  pumpkinSphere.rotation.y += 0.01;
 
   controls.update();
   renderer.render(scene, camera);
