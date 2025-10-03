@@ -1,13 +1,16 @@
 import * as THREE from "three";
+import { ThreeMFLoader } from "three/examples/jsm/Addons.js";
+import { context } from "three/tsl";
 
 const showHelpers = true;
 
 const rotateSpeed = 0.05;
 const smoothing = 0.085;
 let targetRot = 0;
+let isDrawing = false;
 
-let scene, camera, renderer;
-let pumpkinSphere;
+let scene, camera, renderer, raycaster, mouse;
+let pumpkinSphere, pumpkinCanvas, pumpkinContext, pumpkinTexture;
 
 init();
 
@@ -28,9 +31,20 @@ function init() {
   renderer.setAnimationLoop(animate);
   document.body.appendChild(renderer.domElement);
 
+  raycaster = new THREE.Raycaster();
+  mouse = new THREE.Vector2();
+
   /* Add pumpkin */
   const pumpkinGeometry = new THREE.SphereGeometry(10, 16, 12);
-  const pumpkinMaterial = new THREE.MeshStandardMaterial({ color: 0xff7518 });
+  pumpkinCanvas = document.createElement("canvas");
+  pumpkinContext = pumpkinCanvas.getContext("2d");
+  pumpkinCanvas.width = 512;
+  pumpkinCanvas.height = 512;
+  pumpkinTexture = new THREE.CanvasTexture(pumpkinCanvas);
+  //const pumpkinMaterial = new THREE.MeshStandardMaterial({ color: 0xff7518 });
+  const pumpkinMaterial = new THREE.MeshStandardMaterial({
+    map: pumpkinTexture,
+  });
   pumpkinSphere = new THREE.Mesh(pumpkinGeometry, pumpkinMaterial);
 
   const stemGeometry = new THREE.CylinderGeometry(1.5, 3, 9, 12);
@@ -58,10 +72,14 @@ function init() {
 
   /* Connect event listeners */
   window.addEventListener("wheel", onScrollWheel, false);
+  window.addEventListener("mousedown", onMouseDown, false);
+  window.addEventListener("mouseup", onMouseUp, false);
+  window.addEventListener("mousemove", onMouseMove, false);
 }
 
 function animate() {
-  pumpkinSphere.rotation.y += (targetRot - pumpkinSphere.rotation.x) * rotateSpeed;
+  pumpkinSphere.rotation.y +=
+    (targetRot - pumpkinSphere.rotation.x) * rotateSpeed;
   if (Math.abs(targetRot) < smoothing) {
     targetRot = 0;
   } else {
@@ -74,4 +92,45 @@ function animate() {
 function onScrollWheel(event) {
   targetRot += event.deltaY * 0.01;
   targetRot = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetRot));
+}
+
+function onMouseDown() {
+  isDrawing = true;
+  drawOnSphere();
+}
+
+function onMouseUp() {
+  isDrawing = false;
+}
+
+function onMouseMove(event) {
+  if (isDrawing) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    drawOnSphere();
+  }
+}
+
+function drawOnSphere() {
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObject(pumpkinSphere);
+
+  if (intersects.length > 0) {
+    const intersectionPoint = intersects[0].point;
+    console.log(
+      `Intersection point: (${intersectionPoint.x}, ${intersectionPoint.y})`
+    );
+
+    const uv = intersects[0].uv;
+
+    const canvasX = uv.x * pumpkinCanvas.width;
+    const canvasY = (1 - uv.y) * pumpkinCanvas.height;
+
+    pumpkinContext.fillStyle = "red";
+    pumpkinContext.beginPath();
+    pumpkinContext.arc(canvasX, canvasY, 5, 0, Math.PI / 2);
+    pumpkinContext.fill();
+
+    pumpkinTexture.needsUpdate = true;
+  }
 }
