@@ -1,11 +1,20 @@
-html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    height: 100%;
+@font-face {
+    font-family: 'creepster-regular';
+    src: url('fonts/Creepster-Regular.ttf') format('truetype');
 }
 
-#title_card {
-    text-align: center;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
 }
 
+#title-card {
+  text-align: center;
+  background-color: purple;
+  padding: 1px;
+  font-family: "creepster-regular", sans-serif;
+  font-size: 18px;
+}
