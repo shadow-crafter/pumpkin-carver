@@ -1,7 +1,6 @@
 import * as THREE from "three";
-import { context } from "three/tsl";
 
-const showHelpers = true;
+const showHelpers = false;
 
 const rotateSpeed = 0.05;
 const smoothing = 0.085;
@@ -66,7 +65,7 @@ function init() {
     const lightHelper = new THREE.PointLightHelper(pointLight);
     scene.add(lightHelper);
     const gridHelper = new THREE.GridHelper(200, 50);
-    //scene.add(gridHelper);
+    scene.add(gridHelper);
   }
 
   const ambientLight = new THREE.AmbientLight(0xffffff);
