@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { ThreeMFLoader } from "three/examples/jsm/Addons.js";
-import { context } from "three/tsl";
+import { context, pmremTexture } from "three/tsl";
 
 const showHelpers = true;
 
@@ -105,8 +105,9 @@ function onMouseUp() {
 
 function onMouseMove(event) {
   if (isDrawing) {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    const rect =renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     drawOnSphere();
   }
 }
