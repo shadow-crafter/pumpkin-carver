@@ -37,13 +37,17 @@ function init() {
   /* Add pumpkin */
   const pumpkinGeometry = new THREE.SphereGeometry(10, 16, 12);
   pumpkinCanvas = document.createElement("canvas");
-  pumpkinContext = pumpkinCanvas.getContext("2d");
   pumpkinCanvas.width = 512;
   pumpkinCanvas.height = 512;
+  pumpkinContext = pumpkinCanvas.getContext("2d");
+  fillPumpkin();
   pumpkinTexture = new THREE.CanvasTexture(pumpkinCanvas);
   //const pumpkinMaterial = new THREE.MeshStandardMaterial({ color: 0xff7518 });
   const pumpkinMaterial = new THREE.MeshStandardMaterial({
+    color: 0xff7518,
     map: pumpkinTexture,
+    transparent: true,
+    opacity: 1,
   });
   pumpkinSphere = new THREE.Mesh(pumpkinGeometry, pumpkinMaterial);
 
@@ -89,6 +93,12 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+function fillPumpkin() {
+  pumpkinContext.fillStyle = "#FF7518";
+  pumpkinContext.fillRect(0, 0, pumpkinCanvas.width, pumpkinCanvas.height);
+  //add pumpkin lines logic
+}
+
 function onScrollWheel(event) {
   targetRot += event.deltaY * 0.01;
   targetRot = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetRot));
@@ -105,7 +115,7 @@ function onMouseUp() {
 
 function onMouseMove(event) {
   if (isDrawing) {
-    const rect =renderer.domElement.getBoundingClientRect();
+    const rect = renderer.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     drawOnSphere();
@@ -127,7 +137,7 @@ function drawOnSphere() {
     const canvasX = uv.x * pumpkinCanvas.width;
     const canvasY = (1 - uv.y) * pumpkinCanvas.height;
 
-    pumpkinContext.fillStyle = "red";
+    pumpkinContext.fillStyle = "black";
     pumpkinContext.beginPath();
     pumpkinContext.arc(canvasX, canvasY, 5, 0, Math.PI / 2);
     pumpkinContext.fill();
