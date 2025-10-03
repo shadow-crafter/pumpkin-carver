@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { context } from "three/tsl";
 
 const showHelpers = true;
 
@@ -40,7 +41,6 @@ function init() {
   pumpkinContext = pumpkinCanvas.getContext("2d");
   fillPumpkin();
   pumpkinTexture = new THREE.CanvasTexture(pumpkinCanvas);
-  //const pumpkinMaterial = new THREE.MeshStandardMaterial({ color: 0xff7518 });
   const pumpkinMaterial = new THREE.MeshStandardMaterial({
     color: 0xff7518,
     map: pumpkinTexture,
@@ -94,7 +94,25 @@ function animate() {
 function fillPumpkin() {
   pumpkinContext.fillStyle = "#FF7518";
   pumpkinContext.fillRect(0, 0, pumpkinCanvas.width, pumpkinCanvas.height);
-  //add pumpkin lines logic
+
+  const radius = 10;
+  const scale = pumpkinCanvas.width / (2 * radius);
+  const lineCount = 8;
+  const offset = pumpkinCanvas.width / lineCount;
+  const centerY = pumpkinCanvas.height / 2;
+
+  pumpkinContext.strokeStyle = "#96450fff";
+  pumpkinContext.lineWidth = 2;
+  for (let i = 0; i < lineCount; i++) {
+    const xCord = i * offset + (offset / 2);
+    const startY = centerY - radius * scale;
+    const endY = centerY + radius * scale;
+
+    pumpkinContext.beginPath();
+    pumpkinContext.moveTo(xCord, startY);
+    pumpkinContext.lineTo(xCord, endY);
+    pumpkinContext.stroke();
+  }
 }
 
 function onScrollWheel(event) {
@@ -102,8 +120,9 @@ function onScrollWheel(event) {
   targetRot = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetRot));
 }
 
-function onMouseDown() {
+function onMouseDown(event) {
   isDrawing = true;
+  updateMousePos(event);
   drawOnSphere();
 }
 
@@ -111,11 +130,15 @@ function onMouseUp() {
   isDrawing = false;
 }
 
+function updateMousePos(event) {
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+}
+
 function onMouseMove(event) {
   if (isDrawing) {
-    const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    updateMousePos(event);
     drawOnSphere();
   }
 }
@@ -136,9 +159,11 @@ function drawOnSphere() {
     const canvasY = (1 - uv.y) * pumpkinCanvas.height;
 
     pumpkinContext.fillStyle = "black";
+    pumpkinContext.strokeStyle = "black";
     pumpkinContext.beginPath();
     pumpkinContext.arc(canvasX, canvasY, 5, 0, Math.PI / 2);
     pumpkinContext.fill();
+    pumpkinContext.stroke();
 
     pumpkinTexture.needsUpdate = true;
   }
