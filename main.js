@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-const showHelpers = false;
+const showHelpers = true;
 
 const rotateSpeed = 0.05;
 const smoothing = 0.085;
@@ -45,6 +45,7 @@ function init() {
     map: pumpkinTexture,
     transparent: true,
     opacity: 1,
+    side: THREE.DoubleSide,
   });
   pumpkinSphere = new THREE.Mesh(pumpkinGeometry, pumpkinMaterial);
 
@@ -57,8 +58,8 @@ function init() {
   scene.add(pumpkinSphere);
 
   /* Add light and helpers */
-  const pointLight = new THREE.PointLight(0xffffff, 150);
-  pointLight.position.set(11, 11, 11);
+  const pointLight = new THREE.PointLight(0xffffff, 250);
+  pointLight.position.set(2, 9, 15);
   scene.add(pointLight);
 
   if (showHelpers) {
@@ -68,7 +69,7 @@ function init() {
     scene.add(gridHelper);
   }
 
-  const ambientLight = new THREE.AmbientLight(0xffffff);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
   scene.add(ambientLight);
 
   /* Connect event listeners */
@@ -103,7 +104,7 @@ function fillPumpkin() {
   pumpkinContext.strokeStyle = "#96450fff";
   pumpkinContext.lineWidth = 2;
   for (let i = 0; i < lineCount; i++) {
-    const xCord = i * offset + (offset / 2);
+    const xCord = i * offset + offset / 2;
     const startY = centerY - radius * scale;
     const endY = centerY + radius * scale;
 
@@ -157,12 +158,16 @@ function drawOnSphere() {
     const canvasX = uv.x * pumpkinCanvas.width;
     const canvasY = (1 - uv.y) * pumpkinCanvas.height;
 
-    pumpkinContext.fillStyle = "black";
-    pumpkinContext.strokeStyle = "black";
+    //pumpkinContext.fillStyle = "black";
+    //pumpkinContext.strokeStyle = "black";
+    pumpkinContext.fillStyle = "white";
+    pumpkinContext.strokeStyle = "white";
+    pumpkinContext.globalCompositeOperation = "destination-out";
     pumpkinContext.beginPath();
     pumpkinContext.arc(canvasX, canvasY, 5, 0, Math.PI / 2);
     pumpkinContext.fill();
     pumpkinContext.stroke();
+    pumpkinContext.globalCompositeOperation = "source-over";
 
     pumpkinTexture.needsUpdate = true;
   }
