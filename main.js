@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
 const showHelpers = true;
 
@@ -33,6 +34,19 @@ function init() {
   mouse = new THREE.Vector2();
 
   /* Add pumpkin */
+  const loader = new GLTFLoader();
+  loader.load(
+    "models\\pumpkin.glb",
+    function (gltf) {
+      scene.add(gltf.scene);
+    },
+    undefined,
+    function (error) {
+      console.error(error);
+    }
+  );
+
+  /*
   const pumpkinGeometry = new THREE.SphereGeometry(10, 16, 12);
   pumpkinCanvas = document.createElement("canvas");
   pumpkinCanvas.width = 512;
@@ -56,7 +70,8 @@ function init() {
   stemCylinder.rotation.x = Math.PI / 10;
   pumpkinSphere.add(stemCylinder);
   scene.add(pumpkinSphere);
-
+  */
+ 
   /* Add light and helpers */
   const pointLight = new THREE.PointLight(0xffffff, 250);
   pointLight.position.set(2, 9, 15);
