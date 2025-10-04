@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
-const showHelpers = true;
+const showHelpers = false;
 
 const rotateSpeed = 0.05;
 const smoothing = 0.085;
@@ -53,6 +53,7 @@ function init() {
     "models\\pumpkin.glb",
     function (gltf) {
       pumpkinSphere = gltf.scene;
+      pumpkinSphere.rotation.y = (Math.PI * 3) / 2;
 
       pumpkinSphere.traverse((child) => {
         if (child.isMesh) {
