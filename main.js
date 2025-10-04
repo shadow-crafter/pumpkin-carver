@@ -34,11 +34,33 @@ function init() {
   mouse = new THREE.Vector2();
 
   /* Add pumpkin */
+  pumpkinCanvas = document.createElement("canvas");
+  pumpkinCanvas.width = 512;
+  pumpkinCanvas.height = 512;
+  pumpkinContext = pumpkinCanvas.getContext("2d");
+  fillPumpkin();
+  pumpkinTexture = new THREE.CanvasTexture(pumpkinCanvas);
+  const pumpkinMaterial = new THREE.MeshStandardMaterial({
+    color: 0xff7518,
+    map: pumpkinTexture,
+    transparent: true,
+    opacity: 1,
+    side: THREE.DoubleSide,
+  });
+
   const loader = new GLTFLoader();
   loader.load(
     "models\\pumpkin.glb",
     function (gltf) {
-      scene.add(gltf.scene);
+      pumpkinSphere = gltf.scene;
+
+      pumpkinSphere.traverse((child) => {
+        if (child.isMesh) {
+          child.material = pumpkinMaterial;
+        }
+      });
+
+      scene.add(pumpkinSphere);
     },
     undefined,
     function (error) {
@@ -71,7 +93,7 @@ function init() {
   pumpkinSphere.add(stemCylinder);
   scene.add(pumpkinSphere);
   */
- 
+
   /* Add light and helpers */
   const pointLight = new THREE.PointLight(0xffffff, 250);
   pointLight.position.set(2, 9, 15);
@@ -95,14 +117,15 @@ function init() {
 }
 
 function animate() {
-  pumpkinSphere.rotation.y +=
-    (targetRot - pumpkinSphere.rotation.x) * rotateSpeed;
-  if (Math.abs(targetRot) < smoothing) {
-    targetRot = 0;
-  } else {
-    targetRot += targetRot > 0 ? -smoothing : smoothing;
+  if (pumpkinSphere) {
+    pumpkinSphere.rotation.y +=
+      (targetRot - pumpkinSphere.rotation.x) * rotateSpeed;
+    if (Math.abs(targetRot) < smoothing) {
+      targetRot = 0;
+    } else {
+      targetRot += targetRot > 0 ? -smoothing : smoothing;
+    }
   }
-
   renderer.render(scene, camera);
 }
 
