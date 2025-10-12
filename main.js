@@ -191,13 +191,11 @@ function drawOnSphere() {
     const canvasX = uv.x * pumpkinCanvas.width;
     const canvasY = (1 - uv.y) * pumpkinCanvas.height;
 
-    //pumpkinContext.fillStyle = "black";
-    //pumpkinContext.strokeStyle = "black";
     pumpkinContext.fillStyle = "white";
     pumpkinContext.strokeStyle = "white";
     pumpkinContext.globalCompositeOperation = "destination-out";
     pumpkinContext.beginPath();
-    pumpkinContext.arc(canvasX, canvasY, 5, 0, Math.PI / 2);
+    pumpkinContext.arc(canvasX, canvasY, 2.5, 0, Math.PI * 2);
     pumpkinContext.fill();
     pumpkinContext.stroke();
     pumpkinContext.globalCompositeOperation = "source-over";
