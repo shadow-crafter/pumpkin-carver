@@ -51,9 +51,9 @@ function init() {
   const stemMaterial = new THREE.MeshStandardMaterial({
     color: 0x964b00,
   });
-
   const pumpkinGeometry = new THREE.SphereGeometry(10, 25, 25);
   pumpkinSphere = new THREE.Mesh(pumpkinGeometry, pumpkinMaterial);
+  pumpkinSphere.rotation.y = (Math.PI * 3) / 2;
   scene.add(pumpkinSphere);
 
   const loader = new GLTFLoader();
