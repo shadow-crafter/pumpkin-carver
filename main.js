@@ -53,10 +53,7 @@ function init() {
   });
 
   const pumpkinGeometry = new THREE.SphereGeometry(10, 25, 25);
-  pumpkinSphere = new THREE.Mesh(
-    pumpkinGeometry,
-    pumpkinMaterial
-  );
+  pumpkinSphere = new THREE.Mesh(pumpkinGeometry, pumpkinMaterial);
   scene.add(pumpkinSphere);
 
   const loader = new GLTFLoader();
