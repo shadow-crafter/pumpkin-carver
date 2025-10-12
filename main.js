@@ -10,6 +10,7 @@ let isDrawing = false;
 
 let scene, camera, renderer, raycaster, mouse;
 let pumpkinSphere, pumpkinCanvas, pumpkinContext, pumpkinTexture;
+let pumpkinStem;
 
 init();
 
@@ -47,21 +48,31 @@ function init() {
     opacity: 1,
     side: THREE.DoubleSide,
   });
+  const stemMaterial = new THREE.MeshStandardMaterial({
+    color: 0x964b00,
+  });
+
+  const pumpkinGeometry = new THREE.SphereGeometry(10, 25, 25);
+  pumpkinSphere = new THREE.Mesh(
+    pumpkinGeometry,
+    pumpkinMaterial
+  );
+  scene.add(pumpkinSphere);
 
   const loader = new GLTFLoader();
+  //load pumpkin stem
   loader.load(
-    "models\\pumpkin.glb",
+    "models\\pumpkin_stem.glb",
     function (gltf) {
-      pumpkinSphere = gltf.scene;
-      pumpkinSphere.rotation.y = (Math.PI * 3) / 2;
+      pumpkinStem = gltf.scene;
 
-      pumpkinSphere.traverse((child) => {
+      pumpkinStem.traverse((child) => {
         if (child.isMesh) {
-          child.material = pumpkinMaterial;
+          child.material = stemMaterial;
         }
       });
 
-      scene.add(pumpkinSphere);
+      pumpkinSphere.add(pumpkinStem);
     },
     undefined,
     function (error) {
@@ -69,7 +80,8 @@ function init() {
     }
   );
 
-  const innerPumpkinGeometry = new THREE.SphereGeometry(9.7, 16, 12);
+  //add inner sphere
+  const innerPumpkinGeometry = new THREE.SphereGeometry(9.5, 16, 12);
   const innerPumpkinMaterial = new THREE.MeshStandardMaterial({
     color: 0x000000,
     side: THREE.DoubleSide,
@@ -79,32 +91,6 @@ function init() {
     innerPumpkinMaterial
   );
   scene.add(innerPumpkinSphere);
-
-  /*
-  const pumpkinGeometry = new THREE.SphereGeometry(10, 16, 12);
-  pumpkinCanvas = document.createElement("canvas");
-  pumpkinCanvas.width = 512;
-  pumpkinCanvas.height = 512;
-  pumpkinContext = pumpkinCanvas.getContext("2d");
-  fillPumpkin();
-  pumpkinTexture = new THREE.CanvasTexture(pumpkinCanvas);
-  const pumpkinMaterial = new THREE.MeshStandardMaterial({
-    color: 0xff7518,
-    map: pumpkinTexture,
-    transparent: true,
-    opacity: 1,
-    side: THREE.DoubleSide,
-  });
-  pumpkinSphere = new THREE.Mesh(pumpkinGeometry, pumpkinMaterial);
-
-  const stemGeometry = new THREE.CylinderGeometry(1.5, 3, 9, 12);
-  const stemMaterial = new THREE.MeshStandardMaterial({ color: 0x964b00 });
-  const stemCylinder = new THREE.Mesh(stemGeometry, stemMaterial);
-  stemCylinder.position.y = 10;
-  stemCylinder.rotation.x = Math.PI / 10;
-  pumpkinSphere.add(stemCylinder);
-  scene.add(pumpkinSphere);
-  */
 
   /* Add light and helpers */
   const pointLight = new THREE.PointLight(0xffffff, 250);
