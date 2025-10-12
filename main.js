@@ -1,21 +1,116 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
-const showHelpers = false;
-
-const rotateSpeed = 0.05;
-const smoothing = 0.085;
-let targetRot = 0;
-let isDrawing = false;
+const SHOW_HELPERS = false;
+const ROTATE_SPEED = 0.05;
+const SMOOTHING = 0.085;
 
 let scene, camera, renderer, raycaster, mouse;
-let pumpkinSphere, pumpkinCanvas, pumpkinContext, pumpkinTexture;
-let pumpkinStem;
+let pumpkin;
+let targetRotation = 0;
+let isDrawing = false;
 
-init();
+//put pumpkin-specific constants in here?
+class Pumpkin {
+  static RADIUS = 10;
+  static TEXTURE_SIZE = 512;
+  constructor() {
+    this.canvas = document.createElement("canvas");
+    this.canvas.width = Pumpkin.TEXTURE_SIZE;
+    this.canvas.height = Pumpkin.TEXTURE_SIZE;
+    this.ctx = this.canvas.getContext("2d");
+    this.texture = new THREE.CanvasTexture(this.canvas);
+    this.fillPumpkinTexture();
+
+    this.mesh = this.createPumpkinMesh();
+    this.addStem();
+    this.addInnerSphere();
+  }
+
+  createPumpkinMesh() {
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xff7518,
+      map: this.texture,
+      transparent: true,
+      opacity: 1,
+      side: THREE.DoubleSide,
+    });
+    const geometry = new THREE.SphereGeometry(Pumpkin.RADIUS, 25, 25);
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.rotation.y = (Math.PI * 3) / 2;
+    scene.add(mesh);
+    return mesh;
+  }
+
+  addStem() {
+    const loader = new GLTFLoader();
+    const stemMaterial = new THREE.MeshStandardMaterial({ color: 0x964b00 });
+    loader.load(
+      "models\\pumpkin_stem.glb",
+      (gltf) => {
+        gltf.scene.traverse((child) => {
+          if (child.isMesh) {
+            child.material = stemMaterial;
+          }
+        });
+        this.mesh.add(gltf.scene);
+      },
+      undefined,
+      (error) => console.error(error)
+    );
+  }
+
+  addInnerSphere() {
+    const geometry = new THREE.SphereGeometry(Pumpkin.RADIUS - 0.5, 25, 25);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x000000,
+      side: THREE.DoubleSide,
+    });
+    const inner = new THREE.Mesh(geometry, material);
+    scene.add(inner);
+  }
+
+  fillPumpkinTexture() {
+    this.ctx.fillStyle = "#FF7518";
+    this.ctx.fillRect(0, 0, Pumpkin.TEXTURE_SIZE, Pumpkin.TEXTURE_SIZE);
+
+    const scale = Pumpkin.TEXTURE_SIZE / (2 * Pumpkin.RADIUS);
+    const lineCount = 8;
+    const offset = Pumpkin.TEXTURE_SIZE / lineCount;
+    const centerY = Pumpkin.TEXTURE_SIZE / 2;
+
+    this.ctx.strokeStyle = "#96450fff";
+    this.ctx.lineWidth = 2;
+    for (let i = 0; i < lineCount; i++) {
+      const x = i * offset + offset / 2;
+      const startY = centerY - Pumpkin.RADIUS * scale;
+      const endY = centerY + Pumpkin.RADIUS * scale;
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(x, startY);
+      this.ctx.lineTo(x, endY);
+      this.ctx.stroke();
+    }
+  }
+
+  carveAtUV(uv) {
+    const x = uv.x * Pumpkin.TEXTURE_SIZE;
+    const y = (1 - uv.y) * Pumpkin.TEXTURE_SIZE;
+
+    this.ctx.fillStyle = "white";
+    this.ctx.strokeStyle = "white";
+    this.ctx.globalCompositeOperation = "destination-out";
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+    this.ctx.fill();
+    this.ctx.stroke();
+    this.ctx.globalCompositeOperation = "source-over";
+
+    this.texture.needsUpdate = true;
+  }
+}
 
 function init() {
-  /* Setup */
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(
     75,
@@ -34,77 +129,26 @@ function init() {
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
 
-  /* Add pumpkin */
-  pumpkinCanvas = document.createElement("canvas");
-  pumpkinCanvas.width = 512;
-  pumpkinCanvas.height = 512;
-  pumpkinContext = pumpkinCanvas.getContext("2d");
-  fillPumpkin();
-  pumpkinTexture = new THREE.CanvasTexture(pumpkinCanvas);
-  const pumpkinMaterial = new THREE.MeshStandardMaterial({
-    color: 0xff7518,
-    map: pumpkinTexture,
-    transparent: true,
-    opacity: 1,
-    side: THREE.DoubleSide,
-  });
-  const stemMaterial = new THREE.MeshStandardMaterial({
-    color: 0x964b00,
-  });
-  const pumpkinGeometry = new THREE.SphereGeometry(10, 25, 25);
-  pumpkinSphere = new THREE.Mesh(pumpkinGeometry, pumpkinMaterial);
-  pumpkinSphere.rotation.y = (Math.PI * 3) / 2;
-  scene.add(pumpkinSphere);
+  pumpkin = new Pumpkin();
 
-  const loader = new GLTFLoader();
-  //load pumpkin stem
-  loader.load(
-    "models\\pumpkin_stem.glb",
-    function (gltf) {
-      pumpkinStem = gltf.scene;
+  addLights();
+  addEventListeners();
+}
 
-      pumpkinStem.traverse((child) => {
-        if (child.isMesh) {
-          child.material = stemMaterial;
-        }
-      });
-
-      pumpkinSphere.add(pumpkinStem);
-    },
-    undefined,
-    function (error) {
-      console.error(error);
-    }
-  );
-
-  //add inner sphere
-  const innerPumpkinGeometry = new THREE.SphereGeometry(9.5, 16, 12);
-  const innerPumpkinMaterial = new THREE.MeshStandardMaterial({
-    color: 0x000000,
-    side: THREE.DoubleSide,
-  });
-  const innerPumpkinSphere = new THREE.Mesh(
-    innerPumpkinGeometry,
-    innerPumpkinMaterial
-  );
-  scene.add(innerPumpkinSphere);
-
-  /* Add light and helpers */
+function addLights() {
   const pointLight = new THREE.PointLight(0xffffff, 250);
   pointLight.position.set(2, 9, 15);
   scene.add(pointLight);
 
-  if (showHelpers) {
-    const lightHelper = new THREE.PointLightHelper(pointLight);
-    scene.add(lightHelper);
-    const gridHelper = new THREE.GridHelper(200, 50);
-    scene.add(gridHelper);
+  if (SHOW_HELPERS) {
+    scene.add(new THREE.PointLightHelper(pointLight));
+    scene.add(new THREE.GridHelper(200, 50));
   }
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-  scene.add(ambientLight);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+}
 
-  /* Connect event listeners */
+function addEventListeners() {
   window.addEventListener("wheel", onScrollWheel, false);
   window.addEventListener("mousedown", onMouseDown, false);
   window.addEventListener("mouseup", onMouseUp, false);
@@ -112,55 +156,41 @@ function init() {
 }
 
 function animate() {
-  if (pumpkinSphere) {
-    pumpkinSphere.rotation.y +=
-      (targetRot - pumpkinSphere.rotation.x) * rotateSpeed;
-    if (Math.abs(targetRot) < smoothing) {
-      targetRot = 0;
+  if (pumpkin && pumpkin.mesh) {
+    pumpkin.mesh.rotation.y +=
+      (targetRotation - pumpkin.mesh.rotation.x) * ROTATE_SPEED;
+    if (Math.abs(targetRotation) < SMOOTHING) {
+      targetRotation = 0;
     } else {
-      targetRot += targetRot > 0 ? -smoothing : smoothing;
+      targetRotation += targetRotation > 0 ? -SMOOTHING : SMOOTHING;
     }
   }
   renderer.render(scene, camera);
 }
 
-function fillPumpkin() {
-  pumpkinContext.fillStyle = "#FF7518";
-  pumpkinContext.fillRect(0, 0, pumpkinCanvas.width, pumpkinCanvas.height);
-
-  const radius = 10;
-  const scale = pumpkinCanvas.width / (2 * radius);
-  const lineCount = 8;
-  const offset = pumpkinCanvas.width / lineCount;
-  const centerY = pumpkinCanvas.height / 2;
-
-  pumpkinContext.strokeStyle = "#96450fff";
-  pumpkinContext.lineWidth = 2;
-  for (let i = 0; i < lineCount; i++) {
-    const xCord = i * offset + offset / 2;
-    const startY = centerY - radius * scale;
-    const endY = centerY + radius * scale;
-
-    pumpkinContext.beginPath();
-    pumpkinContext.moveTo(xCord, startY);
-    pumpkinContext.lineTo(xCord, endY);
-    pumpkinContext.stroke();
-  }
-}
-
 function onScrollWheel(event) {
-  targetRot += event.deltaY * 0.01;
-  targetRot = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetRot));
+  targetRotation += event.deltaY * 0.01;
+  targetRotation = Math.max(
+    -Math.PI / 2,
+    Math.min(Math.PI / 2, targetRotation)
+  );
 }
 
 function onMouseDown(event) {
   isDrawing = true;
   updateMousePos(event);
-  drawOnSphere();
+  drawOnPumpkin();
 }
 
 function onMouseUp() {
   isDrawing = false;
+}
+
+function onMouseMove(event) {
+  if (isDrawing) {
+    updateMousePos(event);
+    drawOnPumpkin();
+  }
 }
 
 function updateMousePos(event) {
@@ -169,37 +199,13 @@ function updateMousePos(event) {
   mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 }
 
-function onMouseMove(event) {
-  if (isDrawing) {
-    updateMousePos(event);
-    drawOnSphere();
-  }
-}
-
-function drawOnSphere() {
+function drawOnPumpkin() {
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObject(pumpkinSphere);
+  const intersects = raycaster.intersectObject(pumpkin.mesh);
 
   if (intersects.length > 0) {
-    const intersectionPoint = intersects[0].point;
-    console.log(
-      `Intersection point: (${intersectionPoint.x}, ${intersectionPoint.y})`
-    );
-
-    const uv = intersects[0].uv;
-
-    const canvasX = uv.x * pumpkinCanvas.width;
-    const canvasY = (1 - uv.y) * pumpkinCanvas.height;
-
-    pumpkinContext.fillStyle = "white";
-    pumpkinContext.strokeStyle = "white";
-    pumpkinContext.globalCompositeOperation = "destination-out";
-    pumpkinContext.beginPath();
-    pumpkinContext.arc(canvasX, canvasY, 2.5, 0, Math.PI * 2);
-    pumpkinContext.fill();
-    pumpkinContext.stroke();
-    pumpkinContext.globalCompositeOperation = "source-over";
-
-    pumpkinTexture.needsUpdate = true;
+    pumpkin.carveAtUV(intersects[0].uv);
   }
 }
+
+init();
