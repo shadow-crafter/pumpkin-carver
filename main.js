@@ -69,6 +69,17 @@ function init() {
     }
   );
 
+  const innerPumpkinGeometry = new THREE.SphereGeometry(9.7, 16, 12);
+  const innerPumpkinMaterial = new THREE.MeshStandardMaterial({
+    color: 0x000000,
+    side: THREE.DoubleSide,
+  });
+  const innerPumpkinSphere = new THREE.Mesh(
+    innerPumpkinGeometry,
+    innerPumpkinMaterial
+  );
+  scene.add(innerPumpkinSphere);
+
   /*
   const pumpkinGeometry = new THREE.SphereGeometry(10, 16, 12);
   pumpkinCanvas = document.createElement("canvas");
