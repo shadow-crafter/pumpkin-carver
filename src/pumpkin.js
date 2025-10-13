@@ -38,7 +38,7 @@ export class Pumpkin {
     const loader = new GLTFLoader();
     const stemMaterial = new THREE.MeshStandardMaterial({ color: 0x964b00 });
     loader.load(
-      "models\\pumpkin_stem.glb",
+      "resources\\models\\pumpkin_stem.glb",
       (gltf) => {
         gltf.scene.traverse((child) => {
           if (child.isMesh) {

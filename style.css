@@ -1,6 +1,6 @@
 @font-face {
   font-family: "creepster-regular";
-  src: url("fonts/Creepster-Regular.ttf") format("truetype");
+  src: url("resources/fonts/Creepster-Regular.ttf") format("truetype");
 }
 
 html,
@@ -30,4 +30,6 @@ body {
   flex: 1 1 auto;
   display: block;
   height: 100%;
+  background: url(resources/images/background.jpg) no-repeat center center;
+  background-size: cover;
 }

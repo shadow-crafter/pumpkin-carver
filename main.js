@@ -5,7 +5,8 @@ const ROTATE_SPEED = 0.05;
 const SMOOTHING = 0.085;
 
 let scene, camera, renderer, raycaster, mouse;
-let pointLight, pointLightHelper;
+let keyLight, keyLightHelper;
+let backLight, backLightHelper;
 let gridHelper;
 let pumpkin;
 
@@ -27,7 +28,11 @@ function init() {
 
   const canvas = document.getElementById("c");
 
-  renderer = new THREE.WebGLRenderer({ canvas: canvas });
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    canvas: canvas,
+    alpha: true,
+  });
   renderer.setPixelRatio(window.devicePixelRatio);
   onWindowResize();
   renderer.setAnimationLoop(animate);
@@ -43,21 +48,28 @@ function init() {
 }
 
 function addLights() {
-  pointLight = new THREE.PointLight(0xffffff, 250);
-  pointLight.position.set(2, 9, 15);
-  scene.add(pointLight);
+  keyLight = new THREE.PointLight(0xffc0a1, 250);
+  keyLight.position.set(2, 9, 15);
+  scene.add(keyLight);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+  backLight = new THREE.DirectionalLight(0xa349a4, 10);
+  backLight.position.set(10, 1, -8);
+  backLight.target.position.set(0, 0, 5);
+  scene.add(backLight);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.8));
 }
 
 function updateHelpers() {
   if (showHelpers) {
-    pointLightHelper = new THREE.PointLightHelper(pointLight);
+    keyLightHelper = new THREE.PointLightHelper(keyLight);
+    backLightHelper = new THREE.DirectionalLightHelper(backLight);
     gridHelper = new THREE.GridHelper(200, 50);
-    scene.add(pointLightHelper);
+    scene.add(keyLightHelper, backLightHelper);
     scene.add(gridHelper);
   } else {
-    scene.remove(pointLightHelper, gridHelper);
+    scene.remove(keyLightHelper, backLightHelper);
+    scene.remove(gridHelper);
   }
 }
 
