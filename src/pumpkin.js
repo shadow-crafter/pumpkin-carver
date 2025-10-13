@@ -59,7 +59,7 @@ export class Pumpkin {
       side: THREE.DoubleSide,
     });
     const inner = new THREE.Mesh(geometry, material);
-    this.scene.add(inner);
+    this.mesh.add(inner);
   }
 
   fillPumpkinTexture() {

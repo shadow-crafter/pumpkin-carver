@@ -19,6 +19,8 @@ function init() {
     1000
   );
   camera.position.z = 25;
+  camera.position.y = 10;
+  camera.rotation.x = -Math.PI / 8;
 
   const canvas = document.getElementById("c");
 
@@ -31,6 +33,7 @@ function init() {
   mouse = new THREE.Vector2();
 
   pumpkin = new Pumpkin(scene);
+  pumpkin.mesh.position.y = -2.5;
 
   addLights();
   addEventListeners();
