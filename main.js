@@ -1,14 +1,17 @@
 import * as THREE from "three";
 import { Pumpkin } from "./src/pumpkin";
 
-const SHOW_HELPERS = false;
 const ROTATE_SPEED = 0.05;
 const SMOOTHING = 0.085;
 
 let scene, camera, renderer, raycaster, mouse;
+let pointLight, pointLightHelper;
+let gridHelper;
 let pumpkin;
-let targetRotation = 0;
+
 let isDrawing = false;
+let showHelpers = false;
+let targetRotation = 0;
 
 function init() {
   scene = new THREE.Scene();
@@ -40,16 +43,22 @@ function init() {
 }
 
 function addLights() {
-  const pointLight = new THREE.PointLight(0xffffff, 250);
+  pointLight = new THREE.PointLight(0xffffff, 250);
   pointLight.position.set(2, 9, 15);
   scene.add(pointLight);
 
-  if (SHOW_HELPERS) {
-    scene.add(new THREE.PointLightHelper(pointLight));
-    scene.add(new THREE.GridHelper(200, 50));
-  }
-
   scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+}
+
+function updateHelpers() {
+  if (showHelpers) {
+    pointLightHelper = new THREE.PointLightHelper(pointLight);
+    gridHelper = new THREE.GridHelper(200, 50);
+    scene.add(pointLightHelper);
+    scene.add(gridHelper);
+  } else {
+    scene.remove(pointLightHelper, gridHelper);
+  }
 }
 
 function addEventListeners() {
@@ -58,6 +67,7 @@ function addEventListeners() {
   window.addEventListener("mousedown", onMouseDown, false);
   window.addEventListener("mouseup", onMouseUp, false);
   window.addEventListener("mousemove", onMouseMove, false);
+  window.addEventListener("keypress", onKeyPress, false);
 }
 
 function animate() {
@@ -112,6 +122,13 @@ function updateMousePos(event) {
   const rect = renderer.domElement.getBoundingClientRect();
   mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
   mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+}
+
+function onKeyPress(event) {
+  if (event.key === "`") {
+    showHelpers = !showHelpers;
+    updateHelpers();
+  }
 }
 
 function drawOnPumpkin() {
