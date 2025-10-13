@@ -20,11 +20,12 @@ function init() {
   );
   camera.position.z = 25;
 
-  renderer = new THREE.WebGLRenderer();
+  const canvas = document.getElementById("c");
+
+  renderer = new THREE.WebGLRenderer({ canvas: canvas });
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  onWindowResize();
   renderer.setAnimationLoop(animate);
-  document.body.appendChild(renderer.domElement);
 
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
@@ -49,6 +50,7 @@ function addLights() {
 }
 
 function addEventListeners() {
+  window.addEventListener("resize", onWindowResize, false);
   window.addEventListener("wheel", onScrollWheel, false);
   window.addEventListener("mousedown", onMouseDown, false);
   window.addEventListener("mouseup", onMouseUp, false);
@@ -66,6 +68,16 @@ function animate() {
     }
   }
   renderer.render(scene, camera);
+}
+
+function onWindowResize() {
+  const titleCard = document.getElementById("title-card");
+  const canvas = renderer.domElement;
+  const height = window.innerHeight - titleCard.offsetHeight;
+  camera.aspect = window.innerWidth / height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, height);
+  canvas.style.height = height + "px";
 }
 
 function onScrollWheel(event) {

@@ -6,9 +6,14 @@
 html,
 body {
   margin: 0;
-  padding: 0;
-  overflow: hidden;
   height: 100%;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 #title-card {
@@ -17,4 +22,12 @@ body {
   padding: 1px;
   font-family: "creepster-regular", sans-serif;
   font-size: 18px;
+  flex: 0 0 auto;
+}
+
+#c {
+  width: 100vh;
+  flex: 1 1 auto;
+  display: block;
+  height: 100%;
 }
