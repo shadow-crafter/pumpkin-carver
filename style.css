@@ -44,7 +44,7 @@ body {
   border-radius: 10px;
 }
 
-#tools #selected {
+#tools .selected {
   background-color: aliceblue;
 }
 #c {

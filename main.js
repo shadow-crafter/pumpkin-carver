@@ -139,6 +139,9 @@ function updateMousePos(event) {
 }
 
 function onKeyPress(event) {
+  let selected = document.querySelector(".selected");
+  selected.classList.remove("selected");
+
   switch (event.key) {
     case "`":
       showHelpers = !showHelpers;
@@ -157,6 +160,8 @@ function onKeyPress(event) {
       mode = Modes.ERASER;
       break;
   }
+  selected = document.getElementById(mode);
+  selected.classList.add("selected");
 }
 
 function drawOnPumpkin() {
