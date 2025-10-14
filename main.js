@@ -11,6 +11,7 @@ let gridHelper;
 let pumpkin;
 
 let isDrawing = false;
+let mode = "carve";
 let showHelpers = false;
 let targetRotation = 0;
 
@@ -148,7 +149,7 @@ function drawOnPumpkin() {
   const intersects = raycaster.intersectObject(pumpkin.mesh);
 
   if (intersects.length > 0) {
-    pumpkin.carveAtUV(intersects[0].uv);
+    pumpkin.carveAtUV(intersects[0].uv, mode);
   }
 }
 

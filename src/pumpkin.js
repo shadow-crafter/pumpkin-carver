@@ -85,7 +85,7 @@ export class Pumpkin {
     }
   }
 
-  carveAtUV(uv) {
+  carveAtUV(uv, mode) {
     const x = uv.x * Pumpkin.TEXTURE_SIZE;
     const y = (1 - uv.y) * Pumpkin.TEXTURE_SIZE;
 
@@ -93,7 +93,16 @@ export class Pumpkin {
     this.ctx.strokeStyle = "white";
     this.ctx.globalCompositeOperation = "destination-out";
     this.ctx.beginPath();
-    this.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+    switch (mode) {
+      case "carve":
+        this.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+        break;
+      case "knife":
+        this.ctx.arc(x, y, 2.5, 0, Math.PI);
+        break;
+      default:
+        console.error("Mode not found!");
+    }
     this.ctx.fill();
     this.ctx.stroke();
     this.ctx.globalCompositeOperation = "source-over";
