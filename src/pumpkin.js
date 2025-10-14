@@ -98,7 +98,7 @@ export class Pumpkin {
         this.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
         break;
       case "knife":
-        this.ctx.arc(x, y, 2.5, 0, Math.PI);
+        this.ctx.arc(x, y, 2, 0, Math.PI);
         break;
       default:
         console.error("Mode not found!");

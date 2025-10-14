@@ -138,9 +138,17 @@ function updateMousePos(event) {
 }
 
 function onKeyPress(event) {
-  if (event.key === "`") {
-    showHelpers = !showHelpers;
-    updateHelpers();
+  switch (event.key) {
+    case "`":
+      showHelpers = !showHelpers;
+      updateHelpers();
+      break;
+    case "1":
+      mode = "carve";
+      break;
+    case "2":
+      mode = "knife";
+      break;
   }
 }
 
