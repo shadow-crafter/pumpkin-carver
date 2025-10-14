@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Modes } from "./src/modes";
 import { Pumpkin } from "./src/pumpkin";
 
 const ROTATE_SPEED = 0.05;
@@ -11,7 +12,7 @@ let gridHelper;
 let pumpkin;
 
 let isDrawing = false;
-let mode = "carve";
+let mode = Modes.CARVE;
 let showHelpers = false;
 let targetRotation = 0;
 
@@ -144,10 +145,10 @@ function onKeyPress(event) {
       updateHelpers();
       break;
     case "1":
-      mode = "carve";
+      mode = Modes.CARVE;
       break;
     case "2":
-      mode = "knife";
+      mode = Modes.KNIFE;
       break;
   }
 }

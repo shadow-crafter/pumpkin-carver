@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
+import { Modes } from "./modes";
 
 export class Pumpkin {
   static RADIUS = 10;
@@ -94,10 +95,10 @@ export class Pumpkin {
     this.ctx.globalCompositeOperation = "destination-out";
     this.ctx.beginPath();
     switch (mode) {
-      case "carve":
+      case Modes.CARVE:
         this.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
         break;
-      case "knife":
+      case Modes.KNIFE:
         this.ctx.arc(x, y, 2, 0, Math.PI);
         break;
       default:
