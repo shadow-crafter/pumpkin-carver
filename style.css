@@ -25,6 +25,28 @@ body {
   flex: 0 0 auto;
 }
 
+#tools {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  list-style-type: none;
+  margin: 0 12px;
+  padding: 12px 18px;
+  box-shadow: 12px 12px 12px rgba(255, 117, 24, 0.3);
+  background-color: #ff7518;
+  border-radius: 10px;
+}
+
+#tools button {
+  cursor: pointer;
+  margin: 8px 0;
+  background-color: #96450fff;
+  border-radius: 10px;
+}
+
+#tools #selected {
+  background-color: aliceblue;
+}
 #c {
   width: 100vh;
   flex: 1 1 auto;
