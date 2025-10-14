@@ -101,6 +101,17 @@ export class Pumpkin {
       case Modes.KNIFE:
         this.ctx.arc(x, y, 2, 0, Math.PI);
         break;
+      case Modes.FILLER:
+        this.ctx.fillStyle = "#FF7518";
+        this.ctx.globalCompositeOperation = "source-over";
+        this.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+        break;
+      case Modes.ERASER:
+        this.ctx.fillStyle = "#FF7518";
+        this.ctx.strokeStyle = "#FF7518";
+        this.ctx.globalCompositeOperation = "source-over";
+        this.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+        break;
       default:
         console.error("Mode not found!");
     }

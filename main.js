@@ -150,6 +150,12 @@ function onKeyPress(event) {
     case "2":
       mode = Modes.KNIFE;
       break;
+    case "3":
+      mode = Modes.FILLER;
+      break;
+    case "4":
+      mode = Modes.ERASER;
+      break;
   }
 }
 
