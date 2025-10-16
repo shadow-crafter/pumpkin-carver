@@ -22,7 +22,7 @@ function init() {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1000,
   );
   camera.position.z = 25;
   camera.position.y = 10;
@@ -82,6 +82,13 @@ function addEventListeners() {
   window.addEventListener("mouseup", onMouseUp, false);
   window.addEventListener("mousemove", onMouseMove, false);
   window.addEventListener("keypress", onKeyPress, false);
+
+  const modeButtons = document
+    .getElementById("tools")
+    .querySelectorAll("button");
+  modeButtons.forEach((button) => {
+    button.addEventListener("click", onModeButtonClicked.bind(null, button.id));
+  });
 }
 
 function animate() {
@@ -111,7 +118,7 @@ function onScrollWheel(event) {
   targetRotation += event.deltaY * 0.01;
   targetRotation = Math.max(
     -Math.PI / 2,
-    Math.min(Math.PI / 2, targetRotation)
+    Math.min(Math.PI / 2, targetRotation),
   );
 }
 
@@ -139,9 +146,6 @@ function updateMousePos(event) {
 }
 
 function onKeyPress(event) {
-  let selected = document.querySelector(".selected");
-  selected.classList.remove("selected");
-
   switch (event.key) {
     case "`":
       showHelpers = !showHelpers;
@@ -160,6 +164,17 @@ function onKeyPress(event) {
       mode = Modes.ERASER;
       break;
   }
+  updateSelected();
+}
+
+function onModeButtonClicked(selected) {
+  mode = Modes[selected.toUpperCase()];
+  updateSelected();
+}
+
+function updateSelected() {
+  let selected = document.querySelector(".selected");
+  selected.classList.remove("selected");
   selected = document.getElementById(mode);
   selected.classList.add("selected");
 }
