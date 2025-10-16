@@ -89,6 +89,9 @@ function addEventListeners() {
   modeButtons.forEach((button) => {
     button.addEventListener("click", onModeButtonClicked.bind(null, button.id));
   });
+
+  const screenshotButton = document.getElementById("screenshot-button");
+  screenshotButton.addEventListener("click", onScreenshotClicked);
 }
 
 function animate() {
@@ -177,6 +180,17 @@ function updateSelected() {
   selected.classList.remove("selected");
   selected = document.getElementById(mode);
   selected.classList.add("selected");
+}
+
+function onScreenshotClicked() {
+  renderer.render(scene, camera);
+
+  const canvas = renderer.domElement;
+  const dataURL = canvas.toDataURL("images/png");
+  const link = document.createElement("a");
+  link.href = dataURL;
+  link.download = "pumpkin_screenshot.png";
+  link.click();
 }
 
 function drawOnPumpkin() {
