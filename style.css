@@ -25,6 +25,15 @@ body {
     flex: 0 0 auto;
 }
 
+#screenshot-button {
+    padding: 18px 18px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
 #tools {
     position: absolute;
     top: 50%;

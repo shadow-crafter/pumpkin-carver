@@ -87,6 +87,10 @@ function addEventListeners() {
     .getElementById("tools")
     .querySelectorAll("button");
   modeButtons.forEach((button) => {
+    console.log(button);
+    if (button.id === "screenshot-button") {
+      return;
+    }
     button.addEventListener("click", onModeButtonClicked.bind(null, button.id));
   });
 
@@ -165,6 +169,9 @@ function onKeyPress(event) {
       break;
     case "4":
       mode = Modes.ERASER;
+      break;
+    case "5":
+      onScreenshotClicked();
       break;
   }
   updateSelected();
