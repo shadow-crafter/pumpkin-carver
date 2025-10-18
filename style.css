@@ -1,57 +1,55 @@
 @font-face {
-  font-family: "creepster-regular";
-  src: url("resources/fonts/Creepster-Regular.ttf") format("truetype");
+    font-family: "creepster-regular";
+    src: url("resources/fonts/Creepster-Regular.ttf") format("truetype");
 }
 
 html,
 body {
-  margin: 0;
-  height: 100%;
-  overflow: hidden;
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 #title-card {
-  text-align: center;
-  background-color: purple;
-  padding: 1px;
-  font-family: "creepster-regular", sans-serif;
-  font-size: 18px;
-  flex: 0 0 auto;
+    text-align: center;
+    background-color: purple;
+    padding: 1px;
+    font-family: "creepster-regular", sans-serif;
+    font-size: 18px;
+    flex: 0 0 auto;
 }
 
 #tools {
-  position: absolute;
-  top: 50%;
-  z-index: 10;
-  list-style-type: none;
-  margin: 0 12px;
-  padding: 12px 18px;
-  box-shadow: 12px 12px 12px rgba(255, 117, 24, 0.3);
-  background-color: #ff7518;
-  border-radius: 10px;
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    list-style-type: none;
+    margin: 0 12px;
+    padding: 12px 18px;
+    box-shadow: 12px 12px 12px rgba(255, 117, 24, 0.3);
+    background-color: #ff7518;
+    border-radius: 10px;
 }
 
 #tools button {
-  cursor: pointer;
-  margin: 8px 0;
-  background-color: #96450fff;
-  border-radius: 10px;
+    cursor: pointer;
+    margin: 8px 0;
+    background-color: #96450fff;
+    border-radius: 10px;
 }
 
 #tools .selected {
-  background-color: aliceblue;
+    background-color: aliceblue;
 }
 #c {
-  width: 100vh;
-  flex: 1 1 auto;
-  display: block;
-  height: 100%;
-  background: url(resources/images/background.jpg) no-repeat center center;
-  background-size: cover;
+    width: 100vh;
+    flex: 1 1 auto;
+    display: block;
+    height: 100%;
 }

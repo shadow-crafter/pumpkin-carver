@@ -33,8 +33,8 @@ function init() {
   renderer = new THREE.WebGLRenderer({
     antialias: true,
     canvas: canvas,
-    alpha: true,
   });
+  renderer.setClearColor(0xb24fe0);
   renderer.setPixelRatio(window.devicePixelRatio);
   onWindowResize();
   renderer.setAnimationLoop(animate);
